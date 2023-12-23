@@ -3,10 +3,44 @@ import React, {useState} from 'react';
 const Problem1 = () => {
 
     const [show, setShow] = useState('all');
+    const [data,setData] = useState([]);
+
+    const handleSubmit = e =>{
+        e.preventDefault();
+        const form =e.target.elements;
+        const name = form.name.value;
+        const status = form.status.value.toLowerCase();
+        
+        
+        console.log( name,status)
+        // name with status store into a state
+        setData([...data,{name,status}]);
+        console.log(data)
+    }
+    
 
     const handleClick = (val) =>{
         setShow(val);
     }
+
+    const sortedData = [...data].sort((a, b) => {
+        const order = ['active', 'completed'];
+    
+        const orderA = order.indexOf(a.status);
+        const orderB = order.indexOf(b.status);
+    
+        if (orderA !== -1 && orderB !== -1) {
+            return orderA - orderB;
+        }
+    
+        return orderA !== -1 ? -1 : orderB !== -1 ? 1 : 0;
+    });
+    
+   
+    const filteredData =
+    show === 'all'
+        ? sortedData
+        : sortedData.filter((item) => item.status === show);
 
     return (
 
@@ -14,15 +48,17 @@ const Problem1 = () => {
             <div className="row justify-content-center mt-5">
                 <h4 className='text-center text-uppercase mb-5'>Problem-1</h4>
                 <div className="col-6 ">
-                    <form className="row gy-2 gx-3 align-items-center mb-4">
+                <form onSubmit={handleSubmit} className="row gy-2 gx-3 align-items-center mb-4">
                         <div className="col-auto">
-                            <input type="text" className="form-control" placeholder="Name"/>
+                            <input type="text" className="form-control" placeholder="Name" name="name" />
                         </div>
                         <div className="col-auto">
-                            <input type="text" className="form-control" placeholder="Status"/>
+                            <input type="text" className="form-control" placeholder="Status" name="status" />
                         </div>
                         <div className="col-auto">
-                            <button type="submit" className="btn btn-primary">Submit</button>
+                            <button type="submit" className="btn btn-primary">
+                                Submit
+                            </button>
                         </div>
                     </form>
                 </div>
@@ -47,7 +83,12 @@ const Problem1 = () => {
                         </tr>
                         </thead>
                         <tbody>
-                        
+                        {filteredData.map((item, index) => (
+                                <tr key={index}>
+                                    <td>{item.name}</td>
+                                    <td>{item.status.charAt(0).toUpperCase() + item.status.slice(1).toLowerCase()}</td>
+                                </tr>
+                            ))}
                         </tbody>
                     </table>
                 </div>
